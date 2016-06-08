@@ -44,17 +44,10 @@ class Queue(object):
     to the localhost.
 
     """
-    def __init__(self, name, config=None):
-        specified_config = config or {}
+    def __init__(self, name, config):
+        self.config = config or {}
         self.name = name
         self._name = 'retaskqueue-' + name
-        self.config = {
-            'host': 'localhost',
-            'port': 6379,
-            'db': 0,
-            'password': None,
-        }
-        self.config.update(specified_config)
         self.rdb = None
         self.connected = False
 
@@ -117,8 +110,7 @@ class Queue(object):
 
         """
         config = self.config
-        self.rdb = redis.Redis(config['host'], config['port'], config['db'],\
-                              config['password'])
+        self.rdb = redis.Redis(**config)
         try:
             info = self.rdb.info()
             self.connected = True
